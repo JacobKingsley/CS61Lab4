@@ -31,12 +31,12 @@ def post(blogName, userName, title, postBody, tags, timestamp):
         print("here")
         blog = {"blogName": blogName,
                 "postsWithin": []}
-        newBlogId = blogs.insert_one(blog).__inserted_id
 
     posts = db["posts"]
 
-    timeAcc = datetime.utcnow()
-    permalink  = blogName +'.'+re.sub('[^0-9a-zA-Z]+', '_', title,'_',str(timeAcc))
+    #CHANGE TO PARAM timestamp DURING TESTING
+    timeAcc = str(datetime.datetime.utcnow())
+    permalink  = blogName +'.'+str(re.sub('[^0-9a-zA-Z]+', '_', title) + '_' + timeAcc)
 
     #build out tags list, splitting on space
     tagsArray = []
@@ -51,22 +51,27 @@ def post(blogName, userName, title, postBody, tags, timestamp):
                 "timestamp": timeAcc,
                 "permalink": permalink,
                 "blogName" : blogName}
-        post_id = posts.insert_one(post).inserted_id
-        print("post_id 1: {}".format(post_id))
+        # post_id = posts.insert_one(post).inserted_id
+        # print("post_id 1: {}".format(post_id))
 
     except Exception as e:
         print("Error trying to post: ", type(e), e)
 
     #now try to add link from blog to post using permalink
-    #find out how to get embedded array from Mongo doc, add permalink in
 
     try:
-       
-        post_id = posts.insert_one(post).inserted_id
-        print("post_id 1: {}".format(post_id))
+        blogs.update_one(
+            {"blogName":blogName},
+            {
+                '$push': {
+                    "postsWithin": post
+                }
+            }
+
+        )
 
     except Exception as e:
-        print("Error trying to post: ", type(e), e)
+        print("Error trying to link post to blog: ", type(e), e)
 
 def comment(blogname, permalink, userName, commentBody, timestamp):
     pass
