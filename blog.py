@@ -31,10 +31,12 @@ def post(blogName, userName, title, postBody, tags, timestamp):
         print("here")
         blog = {"blogName": blogName,
                 "postsWithin": []}
-        blogs.insert_one(blog)
+        newBlogId = blogs.insert_one(blog).__inserted_id
 
     posts = db["posts"]
-    permalink  = blogName +'.'+re.sub('[^0-9a-zA-Z]+', '_', title)
+
+    timeAcc = datetime.utcnow()
+    permalink  = blogName +'.'+re.sub('[^0-9a-zA-Z]+', '_', title,'_',str(timeAcc))
 
     #build out tags list, splitting on space
     tagsArray = []
@@ -46,7 +48,7 @@ def post(blogName, userName, title, postBody, tags, timestamp):
                 "title" : title,
                 "text": postBody,
                 "tags": tagsArray,
-                "timestamp": datetime.datetime.utcnow(),
+                "timestamp": timeAcc,
                 "permalink": permalink,
                 "blogName" : blogName}
         post_id = posts.insert_one(post).inserted_id
