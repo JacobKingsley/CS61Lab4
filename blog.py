@@ -6,20 +6,24 @@ import sys
 from shlex import split
 import datetime
 import re
+from configparser import ConfigParser
 
 
 # Connect to your MongoDB cluster:
 try:
-    client = pymongo.MongoClient("mongodb+srv://JacobKingsley61:DylanBienstockXRE1@cluster0.tj0ntky.mongodb.net/test")
+    parser = ConfigParser()
+    parser.read("config.ini")
+    username = parser.get('mongo', 'username')
+    password = parser.get('mongo', 'password')
+
+    client = pymongo.MongoClient("mongodb+srv://{username}:{password}@cluster0.tj0ntky.mongodb.net/test")
     print("Connection established.")
 except pymongo.errors.ServerSelectionTimeoutError as err:
     print("Connection failure:")
     print(err)
 
-
 # Get a reference to the "blog" database:
 db = client["blog"]
-
 
 #format: post blogName userName title postBody tags timestamp
 def post(blogName, userName, title, postBody, tags, timestamp):
@@ -28,9 +32,9 @@ def post(blogName, userName, title, postBody, tags, timestamp):
     blog = blogs.find_one({"blogName" : blogName})
 
     if not blog:
-        print("here")
         blog = {"blogName": blogName,
                 "postsWithin": []}
+        print("new blog added to database")
 
     posts = db["posts"]
 
@@ -72,25 +76,75 @@ def post(blogName, userName, title, postBody, tags, timestamp):
     except Exception as e:
         print("Error trying to link post to blog: ", type(e), e)
 
+    print("post added")
+
 def comment(blogname, permalink, userName, commentBody, timestamp):
-    posts= db['posts']
+    blogs = db["blogs"]
+    blog = blogs.find_one({"blogName" : blogname})
+    
+    new_comment_timestamp = datetime.datetime.utcnow()
+    comment = {
+                    "blogname": blogname,
+                    "permalink": new_comment_timestamp,
+                    "userName": userName,
+                    "comment" : commentBody,
+                    "timestamp": new_comment_timestamp,
+                    "commentsWithin" : []
+                    }
 
-    comments = db['comments']
-    try:
-        comment = {
-            "blogname": blogname,
-            "permalink": permalink,
-            "userName": userName,
-            "comment" : commentBody,
-            "timestamp": datetime.datetime.utcnow(),
-            }
-        comment_id = comments.insert_one(comment).inserted_id
-        print("comment_id 1: {}".format(comment_id))
+    if blog:
+        posts = db["posts"]
+        post = posts.find_one({"permalink": permalink})
+        if post:
+            comments = db['comments']
+            try:
+                comment_id = comments.insert_one(comment).inserted_id
+                print("comment_id 1: {}".format(comment_id))
 
+            except Exception as e:
+                print("Error trying to comment: ", type(e), e)
 
+            try:
+                posts.update_one(
+                    {"permalink":permalink},
+                    {
+                        '$push': {
+                            "commentsWithin": new_comment_timestamp
+                        }
+                    }
+                )
 
-    except Exception as e:
-        print("Error trying to post: ", type(e), e)
+            except Exception as e:
+                print("Error trying to link comment to post: ", type(e), e)
+        else:
+            comments = db["comments"]
+            comment = comments.find_one({"permalink": permalink})
+            if comment:
+                try:
+                    comment_id = comments.insert_one(comment).inserted_id
+                    print("comment_id 1: {}".format(comment_id))
+
+                except Exception as e:
+                    print("Error trying to comment: ", type(e), e)
+
+                try:
+                    comments.update_one(
+                        {"permalink":permalink},
+                        {
+                            '$push': {
+                                "commentsWithin": new_comment_timestamp
+                            }
+                        }
+                    )
+
+                except Exception as e:
+                    print("Error trying to link post to blog: ", type(e), e)
+            else:
+                print("invalid comment. The provided permalink is not a post or comment")
+    else:
+        print("invalid comment. the provided blog does not exist")
+
+    print("comment added")
 
 
 def delete(blogname, permalink, userName, timestamp):
