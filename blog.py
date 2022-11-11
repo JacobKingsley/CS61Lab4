@@ -27,9 +27,8 @@ def post(blogName, userName, title, postBody, tags, timestamp):
     blogs = db["blogs"]
     blog = blogs.find_one({"blogName" : blogName})
 
-    blogFind = list(blog)
-
-    if len(blogFind) == 0:
+    if not blog:
+        print("here")
         blog = {"blogName": blogName,
                 "postsWithin": []}
         blogs.insert_one(blog)
