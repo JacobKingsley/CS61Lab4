@@ -64,7 +64,7 @@ def post(blogName, userName, title, postBody, tags, timestamp):
             {"blogName":blogName},
             {
                 '$push': {
-                    "postsWithin": post
+                    "postsWithin": permalink
                 }
             }
 
