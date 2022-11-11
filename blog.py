@@ -46,13 +46,13 @@ def post(blogName, userName, title, postBody, tags, timestamp):
     try:
         post = {"author": userName,
                 "title" : title,
-                "text": postBody,
+                "body": postBody,
                 "tags": tagsArray,
                 "timestamp": timeAcc,
                 "permalink": permalink,
                 "blogName" : blogName}
-        # post_id = posts.insert_one(post).inserted_id
-        # print("post_id 1: {}".format(post_id))
+        post_id = posts.insert_one(post).inserted_id
+        print("post_id 1: {}".format(post_id))
 
     except Exception as e:
         print("Error trying to post: ", type(e), e)
@@ -67,18 +67,82 @@ def post(blogName, userName, title, postBody, tags, timestamp):
                     "postsWithin": permalink
                 }
             }
-
         )
 
     except Exception as e:
         print("Error trying to link post to blog: ", type(e), e)
 
 def comment(blogname, permalink, userName, commentBody, timestamp):
-    pass
+    posts= db['posts']
+
+    comments = db['comments']
+    try:
+        comment = {
+            "blogname": blogname,
+            "permalink": permalink,
+            "userName": userName,
+            "comment" : commentBody,
+            "timestamp": datetime.datetime.utcnow(),
+            }
+        comment_id = comments.insert_one(comment).inserted_id
+        print("comment_id 1: {}".format(comment_id))
+
+
+
+    except Exception as e:
+        print("Error trying to post: ", type(e), e)
 
 
 def delete(blogname, permalink, userName, timestamp):
-    pass
+    blogs = db["blogs"]
+    blog = blogs.find_one({"blogName" : blogname})
+
+    if blog:
+        posts = db["posts"]
+        post = posts.find_one({"permalink": permalink})
+        if post:
+            deleted_statement = "deleted by " + str(userName)
+            try:
+                posts.update_one(
+                    {"permalink": permalink},
+                    {
+                        "$set" : {
+                            "timestamp": datetime.datetime.utcnow(),
+                            "body": deleted_statement
+                        }
+                    }
+                )
+                print("post deleted")
+
+            except Exception as e:
+                print("Error trying to delete post: ", type(e), e)
+        else:
+            comments = db["comments"]
+            comment = comments.find_one({"permalink": permalink})
+            if comment:
+                deleted_statement = "deleted by " + str(userName)
+                try:
+                    comments.update_one(
+                        {"permalink": permalink},
+                        {
+                            "$set" : {
+                                "comment": deleted_statement,
+                                "timestamp": datetime.datetime.utcnow()
+                            }
+                        }
+                    )
+                    print("comment deleted")
+
+                except Exception as e:
+                    print("Error trying to delete post: ", type(e), e)
+            else:
+                print("invalid delete. The provided permalink is not a post or comment")
+    else:
+        print("invalid delete. the provided blog does not exist")
+
+
+
+
 
 def show(blogname):
     pass
