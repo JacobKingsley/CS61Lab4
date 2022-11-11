@@ -4,6 +4,9 @@
 import pymongo
 import sys
 from shlex import split
+import datetime
+import re
+
 
 # Connect to your MongoDB cluster:
 try:
@@ -19,12 +22,51 @@ db = client["blog"]
 
 
 def post(blogName, userName, title, postBody, tags, timestamp):
+    
+    #check if exists, if not create DB. If exists, call it.
+    #ph 11/11 added docs[] to blog, contains permalinks of each contained blog
     if not blogName: ### not done, check if exists
         blogs = db["blogs"]
-        blog = {"blogName": blogName}
+        blog = {"blogName": blogName,
+                "postsWithin": []}
         blogs.insert_one(blog)
     
+    else:
+        blogs = db["blogs"]
+        blog = blogs.find_one({"blogName" : blogName})
 
+    posts = db["posts"]
+    permalink  = blogName +'.'+re.sub('[^0-9a-zA-Z]+', '_', title)
+
+    #build out tags list, splitting on space
+    tagsArray = []
+    if tags:
+        tagsArray = tags.split(",")
+
+    try:
+        post = {"author": userName,
+                "title" : title,
+                "text": postBody,
+                "tags": tagsArray,
+                "timestamp": datetime.datetime.utcnow(),
+                "permalink": permalink,
+                "blogName" : blogName}
+        post_id = posts.insert_one(post).inserted_id
+        print("post_id 1: {}".format(post_id))
+
+    except Exception as e:
+        print("Error trying to post: ", type(e), e)
+
+    #now try to add link from blog to post using permalink
+    #find out how to get embedded array from Mongo doc, add permalink in
+
+    try:
+       
+        post_id = posts.insert_one(post).inserted_id
+        print("post_id 1: {}".format(post_id))
+
+    except Exception as e:
+        print("Error trying to post: ", type(e), e)
 
 def comment(blogname, permalink, userName, commentBody, timestamp):
     pass
