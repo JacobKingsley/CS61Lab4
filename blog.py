@@ -21,19 +21,18 @@ except pymongo.errors.ServerSelectionTimeoutError as err:
 db = client["blog"]
 
 
+#format: post blogName userName title postBody tags timestamp
 def post(blogName, userName, title, postBody, tags, timestamp):
-    
-    #check if exists, if not create DB. If exists, call it.
-    #ph 11/11 added docs[] to blog, contains permalinks of each contained blog
-    if not blogName: ### not done, check if exists
-        blogs = db["blogs"]
+
+    blogs = db["blogs"]
+    blog = blogs.find_one({"blogName" : blogName})
+
+    blogFind = list(blog)
+
+    if len(blogFind) == 0:
         blog = {"blogName": blogName,
                 "postsWithin": []}
         blogs.insert_one(blog)
-    
-    else:
-        blogs = db["blogs"]
-        blog = blogs.find_one({"blogName" : blogName})
 
     posts = db["posts"]
     permalink  = blogName +'.'+re.sub('[^0-9a-zA-Z]+', '_', title)
