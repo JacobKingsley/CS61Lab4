@@ -89,7 +89,7 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
     new_comment_timestamp = datetime.datetime.utcnow()
     comment = {
                     "blogName": blogname,
-                    "permalink": new_comment_timestamp,
+                    "permalink": str(new_comment_timestamp),
                     "userName": userName,
                     "comment" : commentBody,
                     "timestamp": new_comment_timestamp,
@@ -242,7 +242,7 @@ def show(blogname):
             print("\n")
             lprint("----------------", level)
             lprint("Username: " + comment['userName'], level)
-            lprint("Permalink: " + str(comment['permalink']), level)
+            lprint("Permalink: " + comment['permalink'], level)
             lprint("Contents: ", level) #New line per example and pop out a bit
             lprint(comment['comment'], level+1)
 
