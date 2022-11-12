@@ -1,4 +1,4 @@
-### blog.py, a file to 
+### blog.py, a basic CLI for a Mongo-implemented Blog
 ### Authors: Jacob Kingsley and Patrick Howard
 
 import pymongo
@@ -92,7 +92,7 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
                     "commentsWithin" : []
                     }
 
-    if blog:
+    if blog: # 11/12 resolved - {need to figure out if this means a blog exists or just a mongo issue}
         posts = db["posts"]
         post = posts.find_one({"permalink": permalink})
         if post:
@@ -197,9 +197,10 @@ def delete(blogname, permalink, userName, timestamp):
 
 
 
-
 def show(blogname):
-    pass
+    print("In " + blogname + ":\n")
+
+    
 
 
 def read_line(line):
