@@ -81,6 +81,7 @@ def post(blogName, userName, title, postBody, tags, timestamp):
 
     print("post added")
 
+#format: comment blogname permalink userName commentBody timestamp
 def comment(blogname, permalink, userName, commentBody, timestamp):
     blogs = db["blogs"]
     blog = blogs.find_one({"blogName" : blogname})
@@ -210,7 +211,7 @@ def show(blogname):
         level = 1
         if post:
             
-            lprint("----------------", level)
+            lprint("---------------- \n", level)
             lprint("Title: " + post['title'], level)
             lprint("Username: " + post['author'], level)
             if post['tags']:
@@ -220,11 +221,11 @@ def show(blogname):
             lprint("Contents: ", level) #New line per example and pop out a bit
             lprint(post['body'], level+1)
 
-            # comments = post['commentsWithin']
-            # for commentPerma in comments:
-            #     commentPrint(commentPerma, level + 1)
+            comments = post['commentsWithin']
+            for commentPerma in comments:
+                commentPrint(commentPerma, level + 1)
 
-            lprint("----------------", level)
+            lprint("\n----------------", level)
 
         else:
             print("Post with permalink " + permalink + " not found.")
@@ -233,7 +234,27 @@ def show(blogname):
 
     #level does tabbing
     def commentPrint(permalink, level):
-        pass
+        
+        comments = db["comments"]
+        comment = comments.find_one({"permalink" : permalink})
+        
+        if comment:
+            print("\n")
+            lprint("----------------", level)
+            lprint("Username: " + comment['userName'], level)
+            lprint("Permalink: " + str(comment['permalink']), level)
+            lprint("Contents: ", level) #New line per example and pop out a bit
+            lprint(comment['comment'], level+1)
+
+            comments = comment['commentsWithin']
+            for commentPerma in comments:
+                commentPrint(commentPerma, level + 1)
+
+            lprint("----------------", level)
+
+        else:
+            print("Comment with permalink " + permalink + " not found.")
+            return
 
     #prints with levels for tabbing
     def lprint(str, level):
@@ -243,13 +264,14 @@ def show(blogname):
         
         print(printres)
 
+    #main driver
     blogs = db["blogs"]
     blog = blogs.find_one({"blogName" : blogname})
 
     if blog:
         
         allPosts = blog['postsWithin']
-
+        print("\nIn blog " + blogname + ":")
         for arrayPerma in allPosts:
             postPrint(arrayPerma)
         
