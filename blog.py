@@ -16,7 +16,8 @@ try:
     username = parser.get('mongo', 'username')
     password = parser.get('mongo', 'password')
 
-    client = pymongo.MongoClient("mongodb+srv://{username}:{password}@cluster0.tj0ntky.mongodb.net/test")
+    #client = pymongo.MongoClient("mongodb+srv://{username}:{password}@cluster0.tj0ntky.mongodb.net/test")
+    client = pymongo.MongoClient("mongodb+srv://JacobKingsley61:DylanBienstockXRE1@cluster0.tj0ntky.mongodb.net/test")
     print("Connection established.")
 except pymongo.errors.ServerSelectionTimeoutError as err:
     print("Connection failure:")
@@ -198,9 +199,28 @@ def delete(blogname, permalink, userName, timestamp):
 
 
 def show(blogname):
-    print("In " + blogname + ":\n")
+    blogs = db["blogs"]
+    blog = blogs.find_one({"blogName" : blogname})
+
+    if blog:
+        
+        allPosts = blog['postsWithin']
+
+        
+    else:
+        print("invalid show command. Blog " + blogname + " does not exist.")
+        return
 
     
+    
+
+    def postPrint(post):
+        pass
+
+    #level does tabbing
+    def commentPrint(comment, level):
+        pass
+
 
 
 def read_line(line):
@@ -225,6 +245,7 @@ def read_line(line):
             print("invalid show transaction")
         else:
             show(words[1])
+
     else:
         print("invalid transation")
 
@@ -235,6 +256,8 @@ def read_input():
             pass
         elif not line:
             pass
+        elif split(line)[0] == "quit":
+            break
         else:
             read_line(line)
 
