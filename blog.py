@@ -35,6 +35,7 @@ def post(blogName, userName, title, postBody, tags, timestamp):
     if not blog:
         blog = {"blogName": blogName,
                 "postsWithin": []}
+        blogs.insert_one(blog)
         print("new blog added to database")
 
     posts = db["posts"]
@@ -55,7 +56,8 @@ def post(blogName, userName, title, postBody, tags, timestamp):
                 "tags": tagsArray,
                 "timestamp": timeAcc,
                 "permalink": permalink,
-                "blogName" : blogName}
+                "blogName" : blogName,
+                "commentsWithin" : []}
         post_id = posts.insert_one(post).inserted_id
         print("post_id 1: {}".format(post_id))
 
@@ -85,7 +87,7 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
     
     new_comment_timestamp = datetime.datetime.utcnow()
     comment = {
-                    "blogname": blogname,
+                    "blogName": blogname,
                     "permalink": new_comment_timestamp,
                     "userName": userName,
                     "comment" : commentBody,
@@ -199,30 +201,30 @@ def delete(blogname, permalink, userName, timestamp):
 
 
 def show(blogname):
-    blogs = db["blogs"]
-    blog = blogs.find_one({"blogName" : blogname})
-
-    if blog:
-        
-        allPosts = blog['postsWithin']
-
-        for arrayPerma in allPosts:
-            print(arrayPerma)
-        
-    else:
-        print("invalid show command. Blog " + blogname + " does not exist.")
-        return
-
-    
     
     #prints a post and calls comment print on all nested comments
+    #level keeps track of print indentation ("printdentation" - PH 11/12)
     def postPrint(permalink):
         posts = db["posts"]
         post = posts.find_one({"permalink" : permalink})
-
+        level = 1
         if post:
             
-            print(permalink)
+            lprint("----------------", level)
+            lprint("Title: " + post['title'], level)
+            lprint("Username: " + post['author'], level)
+            if post['tags']:
+                lprint("Tags: " + str(post['tags'])[1:-1], level) #interval on list-to-str removes brackets
+            lprint("Timestamp: " + str(post['timestamp']), level)
+            lprint("Permalink: " + post['permalink'], level)
+            lprint("Contents: ", level) #New line per example and pop out a bit
+            lprint(post['body'], level+1)
+
+            # comments = post['commentsWithin']
+            # for commentPerma in comments:
+            #     commentPrint(commentPerma, level + 1)
+
+            lprint("----------------", level)
 
         else:
             print("Post with permalink " + permalink + " not found.")
@@ -232,6 +234,28 @@ def show(blogname):
     #level does tabbing
     def commentPrint(permalink, level):
         pass
+
+    #prints with levels for tabbing
+    def lprint(str, level):
+        printres = str
+        for _ in range(level):
+            printres = "    " + printres
+        
+        print(printres)
+
+    blogs = db["blogs"]
+    blog = blogs.find_one({"blogName" : blogname})
+
+    if blog:
+        
+        allPosts = blog['postsWithin']
+
+        for arrayPerma in allPosts:
+            postPrint(arrayPerma)
+        
+    else:
+        print("invalid show command. Blog " + blogname + " does not exist.")
+        return
 
 
 
