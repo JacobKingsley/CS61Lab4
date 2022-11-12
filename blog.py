@@ -206,6 +206,8 @@ def show(blogname):
         
         allPosts = blog['postsWithin']
 
+        for arrayPerma in allPosts:
+            print(arrayPerma)
         
     else:
         print("invalid show command. Blog " + blogname + " does not exist.")
@@ -213,12 +215,22 @@ def show(blogname):
 
     
     
+    #prints a post and calls comment print on all nested comments
+    def postPrint(permalink):
+        posts = db["posts"]
+        post = posts.find_one({"permalink" : permalink})
 
-    def postPrint(post):
-        pass
+        if post:
+            
+            print(permalink)
+
+        else:
+            print("Post with permalink " + permalink + " not found.")
+            return
+
 
     #level does tabbing
-    def commentPrint(comment, level):
+    def commentPrint(permalink, level):
         pass
 
 
