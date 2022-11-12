@@ -113,7 +113,7 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
                     {"permalink":permalink},
                     {
                         '$push': {
-                            "commentsWithin": new_comment_timestamp
+                            "commentsWithin": str(new_comment_timestamp)
                         }
                     }
                 )
@@ -136,7 +136,7 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
                         {"permalink":permalink},
                         {
                             '$push': {
-                                "commentsWithin": new_comment_timestamp
+                                "commentsWithin": str(new_comment_timestamp)
                             }
                         }
                     )
