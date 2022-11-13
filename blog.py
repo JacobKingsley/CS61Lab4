@@ -33,9 +33,8 @@ def post(blogName, userName, title, postBody, tags, timestamp):
     blog = blogs.find_one({"blogName" : blogName})
 
     if not blog:
-        blog = {"blogName": blogName,
-                "postsWithin": []}
-        blogs.insert_one(blog)
+        blogs.insert_one({"blogName": blogName,
+                "postsWithin": []})
         print("new blog added to database")
 
     posts = db["posts"]
@@ -50,15 +49,14 @@ def post(blogName, userName, title, postBody, tags, timestamp):
         tagsArray = tags.split(",")
 
     try:
-        post = {"author": userName,
+        post_id = posts.insert_one({"author": userName,
                 "title" : title,
                 "body": postBody,
                 "tags": tagsArray,
                 "timestamp": timeAcc,
                 "permalink": permalink,
                 "blogName" : blogName,
-                "commentsWithin" : []}
-        post_id = posts.insert_one(post).inserted_id
+                "commentsWithin" : []}).inserted_id
         print("post_id 1: {}".format(post_id))
 
     except Exception as e:
@@ -87,14 +85,6 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
     blog = blogs.find_one({"blogName" : blogname})
     
     new_comment_timestamp = datetime.datetime.utcnow()
-    comment = {
-                    "blogName": blogname,
-                    "permalink": str(new_comment_timestamp),
-                    "userName": userName,
-                    "comment" : commentBody,
-                    "timestamp": new_comment_timestamp,
-                    "commentsWithin" : []
-                    }
 
     if blog: # 11/12 resolved - {need to figure out if this means a blog exists or just a mongo issue}
         posts = db["posts"]
@@ -102,7 +92,14 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
         if post:
             comments = db['comments']
             try:
-                comment_id = comments.insert_one(comment).inserted_id
+                comment_id = comments.insert_one({
+                    "permalink": str(new_comment_timestamp),
+                    "blogName": blogname,
+                    "userName": userName,
+                    "comment" : commentBody,
+                    "timestamp": new_comment_timestamp,
+                    "commentsWithin" : []
+                    }).inserted_id
                 print("comment_id 1: {}".format(comment_id))
 
             except Exception as e:
@@ -124,8 +121,16 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
             comments = db["comments"]
             comment = comments.find_one({"permalink": permalink})
             if comment:
+                print("here")
                 try:
-                    comment_id = comments.insert_one(comment).inserted_id
+                    comment_id = comments.insert_one({
+                    "permalink": str(new_comment_timestamp),
+                    "blogName": blogname,
+                    "userName": userName,
+                    "comment" : commentBody,
+                    "timestamp": new_comment_timestamp,
+                    "commentsWithin" : []
+                    }).inserted_id
                     print("comment_id 1: {}".format(comment_id))
 
                 except Exception as e:
