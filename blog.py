@@ -307,6 +307,16 @@ def show(blogname):
         return
 
 
+def find(blogName, searchString):
+    posts = db["posts"]
+    search_regex = ".*" + searchString + ".*"
+    posts_in_blog = posts.find({"blogName" : blogName, "body": {"$regex": search_regex}})
+    print(list(posts_in_blog))
+
+    
+
+
+
 
 def read_line(line):
     words = split(line)
@@ -330,6 +340,11 @@ def read_line(line):
             print("invalid show transaction")
         else:
             show(words[1])
+    elif words[0] == "find":
+        if len(words) != 3:
+            print("invalid find transaction")
+        else:
+            find(words[1], words[2])
 
     else:
         print("invalid transation")
