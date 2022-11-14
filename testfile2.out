@@ -1,0 +1,93 @@
+Connection established.
+invalid show command. Blog testblog2 does not exist.
+new blog added to database
+post_id: 6371bc634ed845911312ff00
+post added
+comment_id 1: 6371bc634ed845911312ff01
+comment added
+comment_id 1: 6371bc634ed845911312ff02
+comment added
+post_id: 6371bc634ed845911312ff03
+post added
+
+In blog testBlog2:
+    ----------------
+    Title: Here's a new blog that didn't show before we created it
+    Username: user1
+    Tags: 'newBlog', ' lastLab'
+    Timestamp: 22:45
+    Permalink: testBlog2.Here_s_a_new_blog_that_didn_t_show_before_we_created_it_22:45
+    Contents: 
+        Some contents
+
+
+        ----------------
+        Username: anotherUser
+        Permalink: 22:48
+        Contents: 
+            Going to delete this
+
+
+            ----------------
+            Username: user4
+            Permalink: 22:19
+            Contents: 
+                Here's a comment on a soon-to-be-deleted commenet
+            ----------------
+        ----------------
+    ----------------
+
+
+    ----------------
+    Title: Gonna delete this post as well
+    Username: user15
+    Tags: 'newBlog', ' deleteDestined'
+    Timestamp: 22:54
+    Permalink: testBlog2.Gonna_delete_this_post_as_well_22:54
+    Contents: 
+        Bye!
+    ----------------
+
+
+comment deleted
+post deleted
+
+In blog testBlog2:
+    ----------------
+    Title: Here's a new blog that didn't show before we created it
+    Username: user1
+    Tags: 'newBlog', ' lastLab'
+    Timestamp: 22:45
+    Permalink: testBlog2.Here_s_a_new_blog_that_didn_t_show_before_we_created_it_22:45
+    Contents: 
+        Some contents
+
+
+        ----------------
+        Username: anotherUser
+        Permalink: 22:48
+        Contents: 
+            deleted by theDeleterGuy
+
+
+            ----------------
+            Username: user4
+            Permalink: 22:19
+            Contents: 
+                Here's a comment on a soon-to-be-deleted commenet
+            ----------------
+        ----------------
+    ----------------
+
+
+    ----------------
+    Title: Gonna delete this post as well
+    Username: user15
+    Tags: 'newBlog', ' deleteDestined'
+    Timestamp: 22:52
+    Permalink: testBlog2.Gonna_delete_this_post_as_well_22:54
+    Contents: 
+        deleted by theDeleterGuy
+    ----------------
+
+

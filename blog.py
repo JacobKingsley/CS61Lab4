@@ -39,8 +39,9 @@ def post(blogName, userName, title, postBody, tags, timestamp):
 
     posts = db["posts"]
 
-    #CHANGE TO PARAM timestamp DURING TESTING
-    timeAcc = str(datetime.datetime.utcnow())
+    timeAcc = timestamp
+    #Uncomment the following line to use real timestamps — using passed-in values for grader testing
+    # timeAcc = str(datetime.datetime.utcnow())
     permalink  = blogName +'.'+str(re.sub('[^0-9a-zA-Z]+', '_', title) + '_' + timeAcc)
 
     #build out tags list, splitting on space
@@ -57,7 +58,7 @@ def post(blogName, userName, title, postBody, tags, timestamp):
                 "permalink": permalink,
                 "blogName" : blogName,
                 "commentsWithin" : []}).inserted_id
-        print("post_id 1: {}".format(post_id))
+        print("post_id: {}".format(post_id))
 
     except Exception as e:
         print("Error trying to post: ", type(e), e)
@@ -92,8 +93,13 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
         if post:
             comments = db['comments']
             try:
+                
+                permaFormat = timestamp
+                #Uncomment the following line to use real timestamps — using passed-in values for grader testing
+                #permaFormat = str(new_comment_timestamp)
+
                 comment_id = comments.insert_one({
-                    "permalink": str(new_comment_timestamp),
+                    "permalink": permaFormat,
                     "blogName": blogname,
                     "userName": userName,
                     "comment" : commentBody,
@@ -110,7 +116,7 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
                     {"permalink":permalink},
                     {
                         '$push': {
-                            "commentsWithin": str(new_comment_timestamp)
+                            "commentsWithin": permaFormat
                         }
                     }
                 )
@@ -121,10 +127,15 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
             comments = db["comments"]
             comment = comments.find_one({"permalink": permalink})
             if comment:
-                print("here")
+                
                 try:
+
+                    permaFormat = timestamp
+                    #Uncomment the following line to use real timestamps — using passed-in values for grader testing
+                    #permaFormat = str(new_comment_timestamp)
+
                     comment_id = comments.insert_one({
-                    "permalink": str(new_comment_timestamp),
+                    "permalink": permaFormat,
                     "blogName": blogname,
                     "userName": userName,
                     "comment" : commentBody,
@@ -141,7 +152,7 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
                         {"permalink":permalink},
                         {
                             '$push': {
-                                "commentsWithin": str(new_comment_timestamp)
+                                "commentsWithin": permaFormat
                             }
                         }
                     )
@@ -166,11 +177,16 @@ def delete(blogname, permalink, userName, timestamp):
         if post:
             deleted_statement = "deleted by " + str(userName)
             try:
+
+                timeFormat = timestamp
+                #Uncomment the following line to use real timestamps — using passed-in values for grader testing
+                #timeFormat = str(datetime.datetime.utcnow())
+
                 posts.update_one(
                     {"permalink": permalink},
                     {
                         "$set" : {
-                            "timestamp": datetime.datetime.utcnow(),
+                            "timestamp": timeFormat,
                             "body": deleted_statement
                         }
                     }
@@ -185,6 +201,11 @@ def delete(blogname, permalink, userName, timestamp):
             if comment:
                 deleted_statement = "deleted by " + str(userName)
                 try:
+
+                    timeFormat = timestamp
+                    #Uncomment the following line to use real timestamps — using passed-in values for grader testing
+                    #timeFormat = str(datetime.datetime.utcnow())
+
                     comments.update_one(
                         {"permalink": permalink},
                         {
@@ -216,7 +237,7 @@ def show(blogname):
         level = 1
         if post:
             
-            lprint("---------------- \n", level)
+            lprint("----------------", level)
             lprint("Title: " + post['title'], level)
             lprint("Username: " + post['author'], level)
             if post['tags']:
@@ -230,7 +251,7 @@ def show(blogname):
             for commentPerma in comments:
                 commentPrint(commentPerma, level + 1)
 
-            lprint("\n----------------", level)
+            lprint("----------------", level)
 
         else:
             print("Post with permalink " + permalink + " not found.")
@@ -279,6 +300,7 @@ def show(blogname):
         print("\nIn blog " + blogname + ":")
         for arrayPerma in allPosts:
             postPrint(arrayPerma)
+            print("\n")
         
     else:
         print("invalid show command. Blog " + blogname + " does not exist.")

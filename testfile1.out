@@ -1,0 +1,50 @@
+Connection established.
+new blog added to database
+post_id: 6371b845a544637ff690e7db
+post added
+post_id: 6371b845a544637ff690e7dc
+post added
+comment_id 1: 6371b845a544637ff690e7dd
+comment added
+comment_id 1: 6371b845a544637ff690e7de
+comment added
+
+In blog testBlog1:
+    ----------------
+    Title: Here's our first example post
+    Username: user1
+    Tags: 'example', 'testing', 'database'
+    Timestamp: 21:56
+    Permalink: testBlog1.Here_s_our_first_example_post_21:56
+    Contents: 
+        These are the contents
+
+
+        ----------------
+        Username: user3
+        Permalink: 22:15
+        Contents: 
+            Here's a comment on a post
+
+
+            ----------------
+            Username: user4
+            Permalink: 22:19
+            Contents: 
+                Here's a comment on a comment
+            ----------------
+        ----------------
+    ----------------
+
+
+    ----------------
+    Title: Here's our second example post
+    Username: user2
+    Tags: 'testing', 'database'
+    Timestamp: 21:57
+    Permalink: testBlog1.Here_s_our_second_example_post_21:57
+    Contents: 
+        These are different contents
+    ----------------
+
+
