@@ -5,7 +5,11 @@ comment testBlog2 "testBlog2.Here_s_a_new_blog_that_didn_t_show_before_we_create
 comment testBlog2 "22:48" user4 "Here's a comment on a soon-to-be-deleted commenet" 22:19
 post testBlog2 user15 "Gonna delete this post as well" "Bye!" "newBlog, deleteDestined" 22:54
 show testBlog2
+find testBlog2 delete
 
 delete testBlog2 "22:48" theDeleterGuy 22:52
 delete testBlog2 "testBlog2.Gonna_delete_this_post_as_well_22:54" theDeleterGuy 22:52
 show testBlog2
+
+find testBlog2 lastLab
+find testBlog2 delete

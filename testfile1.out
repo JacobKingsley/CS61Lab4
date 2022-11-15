@@ -1,12 +1,8 @@
 Connection established.
 new blog added to database
-post_id: 6372e3636d407c460714881a
 post added
-post_id: 6372e3636d407c460714881b
 post added
-comment_id 1: 6372e3636d407c460714881c
 comment added
-comment_id 1: 6372e3636d407c460714881d
 comment added
 
 In blog testBlog1:
@@ -24,7 +20,7 @@ In blog testBlog1:
         Username: user3
         Permalink: 22:15
         Contents: 
-            Here's a comment on a post
+            Here's a test comment on a post
 
 
             ----------------
@@ -46,5 +42,77 @@ In blog testBlog1:
     Contents: 
         These are different contents
     ----------------
+
+
+Searching for contents in testBlog1:
+    ----------------
+    Title: Here's our first example post
+    Username: user1
+    Tags: example, testing, database
+    Timestamp: 21:56
+    Permalink: testBlog1.Here_s_our_first_example_post_21:56
+    Contents: 
+        These are the contents
+    ----------------
+
+
+    ----------------
+    Title: Here's our second example post
+    Username: user2
+    Tags: testing, database
+    Timestamp: 21:57
+    Permalink: testBlog1.Here_s_our_second_example_post_21:57
+    Contents: 
+        These are different contents
+    ----------------
+
+
+
+
+Searching for different in testBlog1:
+    ----------------
+    Title: Here's our second example post
+    Username: user2
+    Tags: testing, database
+    Timestamp: 21:57
+    Permalink: testBlog1.Here_s_our_second_example_post_21:57
+    Contents: 
+        These are different contents
+    ----------------
+
+
+
+
+Searching for test in testBlog1:
+    ----------------
+    Title: Here's our first example post
+    Username: user1
+    Tags: example, testing, database
+    Timestamp: 21:56
+    Permalink: testBlog1.Here_s_our_first_example_post_21:56
+    Contents: 
+        These are the contents
+    ----------------
+
+
+    ----------------
+    Title: Here's our second example post
+    Username: user2
+    Tags: testing, database
+    Timestamp: 21:57
+    Permalink: testBlog1.Here_s_our_second_example_post_21:57
+    Contents: 
+        These are different contents
+    ----------------
+
+
+    ----------------
+    Username: user3
+    Permalink: 22:15
+    Contents: 
+        Here's a test comment on a post
+    ----------------
+
+
 
 

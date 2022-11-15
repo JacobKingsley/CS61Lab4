@@ -50,15 +50,14 @@ def post(blogName, userName, title, postBody, tags, timestamp):
     #     tagsArray = tags.split(",")
 
     try:
-        post_id = posts.insert_one({"author": userName,
+        posts.insert_one({"author": userName,
                 "title" : title,
                 "body": postBody,
                 "tags": tags,
                 "timestamp": timeAcc,
                 "permalink": permalink,
                 "blogName" : blogName,
-                "commentsWithin" : []}).inserted_id
-        print("post_id: {}".format(post_id))
+                "commentsWithin" : []})
 
     except Exception as e:
         print("Error trying to post: ", type(e), e)
@@ -98,15 +97,14 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
                 #Uncomment the following line to use real timestamps — using passed-in values for grader testing
                 #permaFormat = str(new_comment_timestamp)
 
-                comment_id = comments.insert_one({
+                comments.insert_one({
                     "permalink": permaFormat,
                     "blogName": blogname,
                     "userName": userName,
                     "comment" : commentBody,
                     "timestamp": new_comment_timestamp,
                     "commentsWithin" : []
-                    }).inserted_id
-                print("comment_id 1: {}".format(comment_id))
+                    })
 
             except Exception as e:
                 print("Error trying to comment: ", type(e), e)
@@ -134,15 +132,14 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
                     #Uncomment the following line to use real timestamps — using passed-in values for grader testing
                     #permaFormat = str(new_comment_timestamp)
 
-                    comment_id = comments.insert_one({
+                    comments.insert_one({
                     "permalink": permaFormat,
                     "blogName": blogname,
                     "userName": userName,
                     "comment" : commentBody,
                     "timestamp": new_comment_timestamp,
                     "commentsWithin" : []
-                    }).inserted_id
-                    print("comment_id 1: {}".format(comment_id))
+                    })
 
                 except Exception as e:
                     print("Error trying to comment: ", type(e), e)
@@ -323,34 +320,8 @@ def find(blogName, searchString):
             lprint("Contents: ", level) #New line per example and pop out a bit
             lprint(post['body'], level+1)
 
-            comments = post['commentsWithin']
-            for commentPerma in comments:
-                commentPrint_perm(commentPerma, level + 1)
-
             lprint("----------------", level)
-
-    def commentPrint_perm(permalink, level):
-        
-        comments = db["comments"]
-        comment = comments.find_one({"permalink" : permalink})
-        
-        if comment:
             print("\n")
-            lprint("----------------", level)
-            lprint("Username: " + comment['userName'], level)
-            lprint("Permalink: " + comment['permalink'], level)
-            lprint("Contents: ", level) #New line per example and pop out a bit
-            lprint(comment['comment'], level+1)
-
-            comments = comment['commentsWithin']
-            for commentPerma in comments:
-                commentPrint_perm(commentPerma, level + 1)
-
-            lprint("----------------", level)
-
-        else:
-            print("Comment with permalink " + permalink + " not found.")
-            return
 
     #prints with levels for tabbing
     def lprint(str, level):
@@ -363,23 +334,18 @@ def find(blogName, searchString):
     def commentPrint_noperm(comment):
         level = 1
         if comment:
-            print("\n")
             lprint("----------------", level)
             lprint("Username: " + comment['userName'], level)
             lprint("Permalink: " + comment['permalink'], level)
             lprint("Contents: ", level) #New line per example and pop out a bit
             lprint(comment['comment'], level+1)
 
-            comments = comment['commentsWithin']
-            for commentPerma in comments:
-                commentPrint_perm(commentPerma, level + 1)
-
             lprint("----------------", level)
-
+            print("\n")
 
     search_regex = ".*" + searchString + ".*"
 
-    print("In " + str(blogName) + ":")
+    print("Searching for " + str(searchString) + " in " + str(blogName) + ":")
 
     posts = db["posts"]
     posts_in_blog = posts.find({"blogName" : blogName, "$or": [{"body": {"$regex": search_regex}}, {"tags": {"$regex": search_regex}}]})
@@ -387,9 +353,11 @@ def find(blogName, searchString):
         postPrint(post)
 
     comments = db['comments']
-    comments_in_blog = comments.find({"blogName" : blogName, "comment": search_regex})
+    comments_in_blog = comments.find({"blogName" : blogName, "comment": {"$regex" : search_regex}})
     for comment in comments_in_blog:
         commentPrint_noperm(comment)
+    
+    print("\n")
 
 
 
