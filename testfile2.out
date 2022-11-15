@@ -26,9 +26,9 @@ In blog testBlog2:
 
             ----------------
             Username: user4
-            Permalink: 22:19
+            Permalink: 22:20
             Contents: 
-                Here's a comment on a comment
+                Here's a comment on a soon-to-be-deleted comment
             ----------------
         ----------------
     ----------------
@@ -67,9 +67,9 @@ Searching for delete in testBlog2:
 
     ----------------
     Username: user4
-    Permalink: 22:19
+    Permalink: 22:20
     Contents: 
-        Here's a comment on a soon-to-be-deleted commenet
+        Here's a comment on a soon-to-be-deleted comment
     ----------------
 
 
@@ -98,9 +98,9 @@ In blog testBlog2:
 
             ----------------
             Username: user4
-            Permalink: 22:19
+            Permalink: 22:20
             Contents: 
-                Here's a comment on a comment
+                Here's a comment on a soon-to-be-deleted comment
             ----------------
         ----------------
     ----------------
@@ -153,9 +153,9 @@ Searching for delete in testBlog2:
 
     ----------------
     Username: user4
-    Permalink: 22:19
+    Permalink: 22:20
     Contents: 
-        Here's a comment on a soon-to-be-deleted commenet
+        Here's a comment on a soon-to-be-deleted comment
     ----------------
 
 

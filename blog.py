@@ -16,8 +16,7 @@ try:
     username = parser.get('mongo', 'username')
     password = parser.get('mongo', 'password')
 
-    #client = pymongo.MongoClient("mongodb+srv://{username}:{password}@cluster0.tj0ntky.mongodb.net/test")
-    client = pymongo.MongoClient("mongodb+srv://JacobKingsley61:DylanBienstockXRE1@cluster0.tj0ntky.mongodb.net/test")
+    client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@cluster0.tj0ntky.mongodb.net/test")
     print("Connection established.")
 except pymongo.errors.ServerSelectionTimeoutError as err:
     print("Connection failure:")
@@ -86,9 +85,9 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
     
     new_comment_timestamp = datetime.datetime.utcnow()
 
-    if blog: # 11/12 resolved - {need to figure out if this means a blog exists or just a mongo issue}
+    if blog: 
         posts = db["posts"]
-        post = posts.find_one({"permalink": permalink})
+        post = posts.find_one({"blogName": blogname, "permalink": permalink})
         if post:
             comments = db['comments']
             try:
@@ -123,7 +122,7 @@ def comment(blogname, permalink, userName, commentBody, timestamp):
                 print("Error trying to link comment to post: ", type(e), e)
         else:
             comments = db["comments"]
-            comment = comments.find_one({"permalink": permalink})
+            comment = comments.find_one({"blogName": blogname, "permalink": permalink})
             if comment:
                 
                 try:
@@ -170,7 +169,7 @@ def delete(blogname, permalink, userName, timestamp):
 
     if blog:
         posts = db["posts"]
-        post = posts.find_one({"permalink": permalink})
+        post = posts.find_one({"blogName": blogname, "permalink": permalink})
         if post:
             deleted_statement = "deleted by " + str(userName)
             try:
@@ -194,7 +193,7 @@ def delete(blogname, permalink, userName, timestamp):
                 print("Error trying to delete post: ", type(e), e)
         else:
             comments = db["comments"]
-            comment = comments.find_one({"permalink": permalink})
+            comment = comments.find_one({"blogName": blogname, "permalink": permalink})
             if comment:
                 deleted_statement = "deleted by " + str(userName)
                 try:

@@ -2,7 +2,7 @@ show testblog2
 
 post testBlog2 user1 "Here's a new blog that didn't show before we created it" "Some contents" "newBlog, lastLab" 22:45
 comment testBlog2 "testBlog2.Here_s_a_new_blog_that_didn_t_show_before_we_created_it_22:45" anotherUser "Going to delete this" 22:48
-comment testBlog2 "22:48" user4 "Here's a comment on a soon-to-be-deleted commenet" 22:19
+comment testBlog2 "22:48" user4 "Here's a comment on a soon-to-be-deleted comment" 22:20
 post testBlog2 user15 "Gonna delete this post as well" "Bye!" "newBlog, deleteDestined" 22:54
 show testBlog2
 find testBlog2 delete
