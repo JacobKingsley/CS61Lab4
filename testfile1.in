@@ -1,5 +1,5 @@
-post testBlog1 user1 "Here's our first example post" "These are the contents" "example,testing,database" 21:56
-post testBlog1 user2 "Here's our second example post" "These are different contents" "testing,database" 21:57
+post testBlog1 user1 "Here's our first example post" "These are the contents" "example, testing, database" 21:56
+post testBlog1 user2 "Here's our second example post" "These are different contents" "testing, database" 21:57
 comment testBlog1 "testBlog1.Here_s_our_first_example_post_21:56" user3 "Here's a comment on a post" 22:15
 comment testBlog1 "22:15" user4 "Here's a comment on a comment" 22:19
 show testBlog1

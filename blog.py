@@ -44,16 +44,16 @@ def post(blogName, userName, title, postBody, tags, timestamp):
     # timeAcc = str(datetime.datetime.utcnow())
     permalink  = blogName +'.'+str(re.sub('[^0-9a-zA-Z]+', '_', title) + '_' + timeAcc)
 
-    #build out tags list, splitting on space
-    tagsArray = []
-    if tags:
-        tagsArray = tags.split(",")
+    # #build out tags list, splitting on space
+    # tagsArray = []
+    # if tags:
+    #     tagsArray = tags.split(",")
 
     try:
         post_id = posts.insert_one({"author": userName,
                 "title" : title,
                 "body": postBody,
-                "tags": tagsArray,
+                "tags": tags,
                 "timestamp": timeAcc,
                 "permalink": permalink,
                 "blogName" : blogName,
@@ -241,7 +241,8 @@ def show(blogname):
             lprint("Title: " + post['title'], level)
             lprint("Username: " + post['author'], level)
             if post['tags']:
-                lprint("Tags: " + str(post['tags'])[1:-1], level) #interval on list-to-str removes brackets
+                # lprint("Tags: " + str(post['tags'])[1:-1], level) #interval on list-to-str removes brackets
+                lprint("Tags: " + post['tags'], level)
             lprint("Timestamp: " + str(post['timestamp']), level)
             lprint("Permalink: " + post['permalink'], level)
             lprint("Contents: ", level) #New line per example and pop out a bit
@@ -308,13 +309,87 @@ def show(blogname):
 
 
 def find(blogName, searchString):
-    posts = db["posts"]
+    def postPrint(post):
+        level = 1
+        if post:
+            lprint("----------------", level)
+            lprint("Title: " + post['title'], level)
+            lprint("Username: " + post['author'], level)
+            if post['tags']:
+                # lprint("Tags: " + str(post['tags'])[1:-1], level) #interval on list-to-str removes brackets
+                lprint("Tags: " + post['tags'], level)
+            lprint("Timestamp: " + str(post['timestamp']), level)
+            lprint("Permalink: " + post['permalink'], level)
+            lprint("Contents: ", level) #New line per example and pop out a bit
+            lprint(post['body'], level+1)
+
+            comments = post['commentsWithin']
+            for commentPerma in comments:
+                commentPrint_perm(commentPerma, level + 1)
+
+            lprint("----------------", level)
+
+    def commentPrint_perm(permalink, level):
+        
+        comments = db["comments"]
+        comment = comments.find_one({"permalink" : permalink})
+        
+        if comment:
+            print("\n")
+            lprint("----------------", level)
+            lprint("Username: " + comment['userName'], level)
+            lprint("Permalink: " + comment['permalink'], level)
+            lprint("Contents: ", level) #New line per example and pop out a bit
+            lprint(comment['comment'], level+1)
+
+            comments = comment['commentsWithin']
+            for commentPerma in comments:
+                commentPrint_perm(commentPerma, level + 1)
+
+            lprint("----------------", level)
+
+        else:
+            print("Comment with permalink " + permalink + " not found.")
+            return
+
+    #prints with levels for tabbing
+    def lprint(str, level):
+        printres = str
+        for _ in range(level):
+            printres = "    " + printres
+        
+        print(printres)
+
+    def commentPrint_noperm(comment):
+        level = 1
+        if comment:
+            print("\n")
+            lprint("----------------", level)
+            lprint("Username: " + comment['userName'], level)
+            lprint("Permalink: " + comment['permalink'], level)
+            lprint("Contents: ", level) #New line per example and pop out a bit
+            lprint(comment['comment'], level+1)
+
+            comments = comment['commentsWithin']
+            for commentPerma in comments:
+                commentPrint_perm(commentPerma, level + 1)
+
+            lprint("----------------", level)
+
+
     search_regex = ".*" + searchString + ".*"
-    posts_in_blog = posts.find({"blogName" : blogName, "body": {"$regex": search_regex}})
-    print(list(posts_in_blog))
 
-    
+    print("In " + str(blogName) + ":")
 
+    posts = db["posts"]
+    posts_in_blog = posts.find({"blogName" : blogName, "$or": [{"body": {"$regex": search_regex}}, {"tags": {"$regex": search_regex}}]})
+    for post in posts_in_blog:
+        postPrint(post)
+
+    comments = db['comments']
+    comments_in_blog = comments.find({"blogName" : blogName, "comment": search_regex})
+    for comment in comments_in_blog:
+        commentPrint_noperm(comment)
 
 
 
